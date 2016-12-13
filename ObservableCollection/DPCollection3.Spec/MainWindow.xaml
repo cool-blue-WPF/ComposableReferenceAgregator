@@ -1,0 +1,40 @@
+﻿<Window x:Class="DPCollection3.Spec.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:do="clr-namespace:DPCollection3.DO;assembly=DPCollection3"
+
+        Title="MainWindow" Height="350" Width="525">
+    <StackPanel>
+        <Button Name="ButtonItem" />
+        <Button Name="ButtonItem1" />
+        <Button Name="ButtonItem2" />
+
+        <StackPanel Name ="colFZ" Margin="6">
+            <TextBlock>colFZ</TextBlock>
+
+            <do:MultiReference3 x:Name="AttributeBinding"
+                colFZ_Receiver="{Binding ElementName=ButtonItem,
+                    PresentationTraceSources.TraceLevel=Medium}" 
+                                Initialized="OnItitialised" />
+
+            <do:MultiReference3 x:Name="ObjectBinding" 
+                                Initialized="OnItitialised">
+
+                <do:MultiReference3.colFZ_Receiver>
+                    <do:FZ
+                        Item="{Binding ElementName=ButtonItem,
+                        PresentationTraceSources.TraceLevel=Medium}" />
+                    <do:FZ
+                        Item="{Binding ElementName=ButtonItem1,
+                        PresentationTraceSources.TraceLevel=Medium}" />
+                    <do:FZ
+                        Item="{Binding ElementName=ButtonItem2,
+                        PresentationTraceSources.TraceLevel=Medium}" />
+                </do:MultiReference3.colFZ_Receiver>
+
+            </do:MultiReference3>
+            
+        </StackPanel>
+
+    </StackPanel>
+</Window>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DPCollection2.FE.MultiReference3">
+    <Position X="0.5" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAACAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FE\MultiReference3.cs</FileName>
+      <NewMemberFileName>DO\MultiReference3.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPCollection2.FE.FE">
+    <Position X="4.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQEIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FE\MultiReference3.cs</FileName>
+      <NewMemberFileName>DO\MultiReference3.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Windows.DependencyObject" Collapsed="true">
+    <Position X="3" Y="0.75" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Windows.FrameworkElement" Collapsed="true">
+    <Position X="0.5" Y="0.75" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
