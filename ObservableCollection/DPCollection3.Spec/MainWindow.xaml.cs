@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 
-namespace DPCollection3.Spec
+namespace CollectionBinding.Spec
 {
 	public partial class MainWindow : Window
 	{

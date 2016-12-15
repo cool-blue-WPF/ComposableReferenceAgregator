@@ -7,7 +7,7 @@
     <ProjectGuid>{83236532-032D-445E-AE34-2681A056C9D0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DPCollection3.Spec</RootNamespace>
+    <RootNamespace>CollectionBinding.Spec</RootNamespace>
     <AssemblyName>DPCollection3.Spec</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

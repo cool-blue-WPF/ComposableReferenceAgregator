@@ -2,21 +2,22 @@
 using System.Windows.Controls;
 using Util;
 
-namespace DPCollection2
+namespace CollectionBinding
 {
-	class Shared
+	static class FZChangedCallback
 	{
 		public static void NamedChangedCallback (
 			DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var host = d as TextBox;
 			if (host == null) return;
-			var item = e.NewValue;
+			//var attrinuteName = ((TargetNames)d).TargetAttribute;
+			var item = e.NewValue as FZ;
 			if (item == null) return;
-			var name = Utility.GetMemberByName(item, "Name");
+			var name = item.Atrribute;
 			if (name == null) return;
 			var route = Utility.GetMemberByName(item, "Type") ?? "Direct";
-			host.Text += string.Format("{2}{0}\t{1}", route, name ?? "null",
+			host.Text += string.Format("{2}{0}\t{1}", route, name.ToString(),
 				host.Text == "" ? "" : "\n");
 		}
 	}
