@@ -54,7 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomMarkupExtension.cs" />
-    <Compile Include="TargetNames.cs" />
+    <Compile Include="IState.cs" />
+    <Compile Include="TargetGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

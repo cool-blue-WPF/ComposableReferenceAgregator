@@ -4,7 +4,7 @@
         xmlns:cb="clr-namespace:CollectionBinding;assembly=DPCollection3"
 
         Title="MainWindow" Height="350" Width="525">
-    <StackPanel>
+    <StackPanel x:Name="RootStack">
 
         <StackPanel Orientation="Horizontal">
             <Label Margin="0,0,6,0">Select Default Attribute</Label>
@@ -27,25 +27,32 @@
                 colFZ_Receiver="{Binding {do:FZ Item ElementName=ButtonItem}}" 
                                 Initialized="OnItitialised" />-->
 
-            <cb:TargetNames x:Name="ObjectBinding"
-                            TargetAttribute="{Binding ElementName=DefaultAtt,
-                                                Path=SelectedValue}"
+            <cb:TargetGroup x:Name="ObjectBinding"
+                            TargetAttribute=
+                                "{Binding ElementName=DefaultAtt, Path=SelectedValue,
+                                    PresentationTraceSources.TraceLevel=Medium}"
                             Initialized="OnItitialised">
 
-                <cb:TargetNames.Targets>
-                    <cb:FZ TargetAttribute="Name"
-                          
-                           Item="{Binding ElementName=ButtonItem,
-                            PresentationTraceSources.TraceLevel=Medium}" />
-                    <cb:FZ
-                        Item="{Binding ElementName=ButtonItem1,
-                            PresentationTraceSources.TraceLevel=Medium}" />
-                    <cb:FZ
-                        Item="{Binding ElementName=ButtonItem2,
-                            PresentationTraceSources.TraceLevel=Medium}" />
-                </cb:TargetNames.Targets>
+                <cb:TargetGroup.Targets>
+                    
+                    <cb:FZ TargetAttribute="Name" Name="T1"
+                           Target="{Binding ElementName=ButtonItem,
+                                    PresentationTraceSources.TraceLevel=Medium}" />
+                    
+                    <cb:FZ Name="T2"
+                           TargetAttribute="{Binding ElementName=DefaultAtt,
+                                            Path=SelectedValue,
+                                            PresentationTraceSources.TraceLevel=Medium}"
+                           Target="{Binding ElementName=ButtonItem1,
+                                    PresentationTraceSources.TraceLevel=Medium}" />
+                    
+                    <cb:FZ Name="T3"
+                           Target="{Binding ElementName=ButtonItem2,
+                                    PresentationTraceSources.TraceLevel=Medium}" />
+                    
+                </cb:TargetGroup.Targets>
 
-            </cb:TargetNames>
+            </cb:TargetGroup>
 
         </StackPanel>
 

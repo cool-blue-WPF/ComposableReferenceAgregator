@@ -11,7 +11,7 @@ namespace CollectionBinding
 		{
 			var host = d as TextBox;
 			if (host == null) return;
-			//var attrinuteName = ((TargetNames)d).TargetAttribute;
+			//var attrinuteName = ((TargetGroup)d).TargetAttribute;
 			var item = e.NewValue as FZ;
 			if (item == null) return;
 			var name = item.Atrribute;
