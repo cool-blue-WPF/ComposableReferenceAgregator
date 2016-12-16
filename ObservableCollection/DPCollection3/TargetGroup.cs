@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using Util;
 
 /* 
@@ -63,8 +62,9 @@ namespace CollectionBinding
 					new State.state
 					{
 						Host = host.Name,
-						targetName = null,
-						TargetAttr = host.TargetAttribute
+						TargetName = null,
+						TargetAttr = host.TargetAttribute,
+						Hash = host.GetHashCode()
 					}));	
 		}
 
@@ -108,13 +108,21 @@ namespace CollectionBinding
 		static TargetGroup ()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TargetGroup),
-				new FrameworkPropertyMetadata(typeof(TextBox)));
+				new FrameworkPropertyMetadata(typeof(TargetGroup)));
 		}
 	}
 
 	public class FZ : Freezable
 	{
 		public string Name { get; set; }
+
+		public int Hash
+		{
+			get
+			{
+				return GetHashCode();
+			}
+		}
 
 		#region DP FrameworkElement Target
 
@@ -172,8 +180,9 @@ namespace CollectionBinding
 					new State.state
 					{
 						Host = this.Name,
-						targetName = ItemName,
-						TargetAttr = TargetAttribute
+						TargetName = ItemName,
+						TargetAttr = TargetAttribute,
+						Hash = GetHashCode()
 					}
 			);
 		}
@@ -201,8 +210,9 @@ namespace CollectionBinding
 		public struct state
 		{
 			public string Host;
-			public string targetName;
+			public string TargetName;
 			public string TargetAttr;
+			public int Hash;
 		}
 		public state Target { get { return _getItem(); } }
 	}

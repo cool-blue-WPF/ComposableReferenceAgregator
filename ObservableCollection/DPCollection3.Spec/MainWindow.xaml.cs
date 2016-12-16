@@ -16,7 +16,7 @@ namespace CollectionBinding.Spec
 			{
 				hostName = target.Target.Host;
 				targetAtt = target.Target.TargetAttr ?? "nothing";
-				itemName = target.Target.targetName ?? "nothing";
+				itemName = target.Target.TargetName ?? "nothing";
 			}
 			else
 			{

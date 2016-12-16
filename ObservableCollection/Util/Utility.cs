@@ -20,7 +20,7 @@ namespace Util
 
 			if (item == null) return null;
 
-			var prop = _getProperty(item, name);
+			var prop = string.IsNullOrEmpty(name) ? null : _getProperty(item, name);
 			return prop == null ? null : prop.GetValue(item, null);
 		}
 		public static void SetMemberByName(object item, string name,

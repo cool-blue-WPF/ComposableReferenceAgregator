@@ -31,7 +31,7 @@
                             TargetAttribute=
                                 "{Binding ElementName=DefaultAtt, Path=SelectedValue,
                                     PresentationTraceSources.TraceLevel=Medium}"
-                            Initialized="OnItitialised">
+                            Initialized="OnItitialised" >
 
                 <cb:TargetGroup.Targets>
                     
