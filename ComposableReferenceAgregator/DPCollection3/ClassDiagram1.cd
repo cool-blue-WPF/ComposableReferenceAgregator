@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CollectionBinding.CustomMarkupExtension">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CustomMarkupExtension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CollectionBinding.FZChangedCallback">
+    <Position X="2.25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FZChangedCallback.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CollectionBinding.TargetNames">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAEAAAAAAAAAAAQAAAABAAEAAAAABAAAAAIA=</HashCode>
+      <FileName>TargetNames.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CollectionBinding.FZ">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAACAAAAAAAAAQAEIAAAAAAAAQAAAAIAACA=</HashCode>
+      <FileName>TargetNames.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CollectionBinding.Properties.Resources">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CollectionBinding.Properties.Settings">
+    <Position X="2.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
