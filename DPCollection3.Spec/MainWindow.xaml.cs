@@ -1,40 +1,25 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CollectionBinding.Spec
 {
 	public partial class MainWindow : Window
 	{
-		public void OnItitialised (object sender, EventArgs args)
-		{
-			string hostName, targetAtt, itemName;
-			var target = args as State;
-			if (target != null)
-			{
-				hostName = target.Target.Host;
-				targetAtt = target.Target.TargetAttr ?? "nothing";
-				itemName = target.Target.TargetName ?? "nothing";
-			}
-			else
-			{
-				hostName = targetAtt = itemName = "nothing";
-			}
-			Debug.WriteLine("\n^{0} from {1} targetting {2} on {3}^\n",
-				((FrameworkElement)sender).Name, hostName, targetAtt, itemName);
-				
-		}
 		public MainWindow ()
 		{
 			InitializeComponent();
 			var buttons = RootStack.Children.OfType<Button>();
 			foreach (var button in buttons)
 			{
+				var cmd = ((RoutedUICommand) button.Command).Name;
+				var param = button.CommandParameter;
+
 				button.Content = new TextBox()
 				{
-					Text = "hash=" + button.GetHashCode(),
+					Text = string.Format("hash={0} cmd: {1} param: {2}", 
+					button.GetHashCode(), cmd, param),
 					Margin = new Thickness(6, 0, 0, 0)
 				};
 				button.HorizontalAlignment = HorizontalAlignment.Stretch;

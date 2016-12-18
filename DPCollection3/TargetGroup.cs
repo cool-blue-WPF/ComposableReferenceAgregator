@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Util;
@@ -14,6 +15,58 @@ namespace CollectionBinding
 	{
 		private static TargetGroup instance;
 
+		#region Events
+		public event EventHandler DebugProbe;
+
+		protected virtual void OnDebugProbe(object sender, EventArgs e)
+		{
+			EventHandler handler = DebugProbe;
+			if (handler != null)
+			{
+				handler(sender, e);
+			}
+		}
+		public void DebugTrace (object sender, EventArgs args)
+		{
+			string hostName, targetAtt, itemName;
+			const string defaultValue = "un-set";
+			var target = args as State;
+			if (target != null)
+			{
+				hostName = target.Target.Host.DefaultIfEmpty(defaultValue + " host name");
+				targetAtt = target.Target.TargetAttr.DefaultIfEmpty(defaultValue + " Attr name");
+				itemName = target.Target.TargetName.DefaultIfEmpty(defaultValue + " target name");
+			}
+			else
+			{
+				hostName = targetAtt = itemName = defaultValue + " value";
+			}
+			var senderType = sender.GetType();
+			Debug.WriteLine("\n^{0} from {1} targetting {2} on {3}^\n",
+								senderType, hostName, targetAtt, itemName);
+		}
+
+		private static void PropertyChangedCallback (DependencyObject d,
+			DependencyPropertyChangedEventArgs e)
+		{
+			var host = d as TargetGroup;
+			if (host == null) return;
+
+			// partition the output for bindings
+			instance.OnDebugProbe(instance, new State(() =>
+					new State.state
+					{
+						Host = e.Property.Name,
+						TargetName = null,
+						TargetAttr = host.TargetAttribute,
+						Hash = host.GetHashCode()
+					}
+				)
+			);
+		}
+
+		#endregion
+
 		#region AP TargetAttribute
 
 		// todo callback to update
@@ -23,7 +76,8 @@ namespace CollectionBinding
 				"TargetAttribute", typeof(string),
 				typeof(TargetGroup),
 				new FrameworkPropertyMetadata("CommandParameter",
-						FrameworkPropertyMetadataOptions.Inherits));
+						FrameworkPropertyMetadataOptions.Inherits,
+						PropertyChangedCallback));
 
 		public static void SetTargetAttribute (DependencyObject target, string value)
 		{
@@ -49,24 +103,8 @@ namespace CollectionBinding
 			DependencyProperty.Register(
 				"Targets", typeof(FreezableCollection<FZ>),
 				typeof(TargetGroup),
-				new PropertyMetadata(default(FreezableCollection<FZ>), TargetsPropertyChangedCallback));
-
-		private static void TargetsPropertyChangedCallback(DependencyObject d, 
-			DependencyPropertyChangedEventArgs e)
-		{
-			var host = d as TargetGroup;
-			if (host == null) return;
-
-			// partition the output for bindings
-			instance.OnInitialized(new State(() =>
-					new State.state
-					{
-						Host = host.Name,
-						TargetName = null,
-						TargetAttr = host.TargetAttribute,
-						Hash = host.GetHashCode()
-					}));	
-		}
+				new PropertyMetadata(default(FreezableCollection<FZ>),
+					PropertyChangedCallback));
 
 		public FreezableCollection<FZ> Targets
 		{
@@ -79,7 +117,7 @@ namespace CollectionBinding
 			var item = d as FZ;
 			if (item == null) return;
 
-			instance.OnInitialized(item.EventState);	// partition the output for bindings
+			instance.OnDebugProbe(item, item.EventState);	// partition the output for bindings
 
 			instance.AddLogicalChild(item);
 
@@ -99,6 +137,8 @@ namespace CollectionBinding
 		public TargetGroup()
 		{
 			instance = this;
+
+			DebugProbe += DebugTrace;
 
 			Targets = new FreezableCollection<FZ>();
 			Targets.Changed += ColFzReceiverOnChanged;
