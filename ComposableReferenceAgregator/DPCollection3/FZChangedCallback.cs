@@ -14,10 +14,10 @@ namespace CollectionBinding
 			//var attrinuteName = ((TargetGroup)d).TargetAttribute;
 			var item = e.NewValue as FZ;
 			if (item == null) return;
-			var name = item.Atrribute;
-			if (name == null) return;
+			var targetAttribute = item.Atrribute;
+			if (targetAttribute == null) return;
 			var route = Utility.GetMemberByName(item, "Type") ?? "Direct";
-			host.Text += string.Format("{2}{0}\t{1}", route, name.ToString(),
+			host.Text += string.Format("{2}{0}\t{1}", route, targetAttribute.ToString(),
 				host.Text == "" ? "" : "\n");
 		}
 	}

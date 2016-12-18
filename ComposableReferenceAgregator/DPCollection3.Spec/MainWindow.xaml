@@ -2,8 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:cb="clr-namespace:CollectionBinding;assembly=DPCollection3"
-
+        xmlns:conv="clr-namespace:CollectionBinding.Spec.Converters"
         Title="MainWindow" Height="350" Width="525">
+    
+    <Window.Resources>
+        <conv:NoOppConverter x:Key="NoOpp" />
+        <!--Get a reference to the window to establish View Context-->
+        <RelativeSource x:Key="View" Mode="FindAncestor" 
+                        AncestorType="{x:Type Window}" />
+    </Window.Resources>
+    
     <StackPanel x:Name="RootStack">
 
         <StackPanel Orientation="Horizontal">
@@ -18,7 +26,7 @@
         <Button Name="ButtonItem" Command="AlignCenter" CommandParameter="CP1" />
         <Button Name="ButtonItem1" Command="Backspace" CommandParameter="CP2" />
         <Button Name="ButtonItem2" Command="Close" CommandParameter="CP3" />
-        <TextBlock Text="{Binding ElementName=DefaultAtt, Path=SelectedValue}" />
+        <!--<TextBlock Text="{Binding ElementName=DefaultAtt, Path=SelectedValue}" />-->
 
         <StackPanel Name="colFZ" Margin="6">
             <TextBlock>colFZ</TextBlock>
@@ -27,28 +35,38 @@
                 colFZ_Receiver="{Binding {do:FZ Item ElementName=ButtonItem}}" 
                                 Initialized="OnItitialised" />-->
 
-            <cb:TargetGroup x:Name="ObjectBinding"
+            <cb:TargetGroup x:Name="Group"
                             TargetAttribute=
                                 "{Binding ElementName=DefaultAtt, Path=SelectedValue,
-                                    PresentationTraceSources.TraceLevel=Medium}"
-                            Initialized="OnItitialised" >
+                                    Converter={StaticResource NoOpp},
+                                    ConverterParameter=Group,
+                                    PresentationTraceSources.TraceLevel=High}" >
+            <!--<cb:TargetGroup x:Name="ObjectBinding" >-->
 
                 <cb:TargetGroup.Targets>
                     
-                    <cb:FZ TargetAttribute="Name" Name="T1"
+                    <!--<cb:FZ TargetAttribute="Name" Name="T1"
                            Target="{Binding ElementName=ButtonItem,
-                                    PresentationTraceSources.TraceLevel=Medium}" />
-                    
+                                    PresentationTraceSources.TraceLevel=None}" />-->
+
                     <cb:FZ Name="T2"
+                            Target="{Binding ElementName=ButtonItem1,
+                                            Converter={StaticResource NoOpp},
+                                            ConverterParameter=T2,
+                                            PresentationTraceSources.TraceLevel=None}" />
+
+                    <!--<cb:FZ Name="T2a"
                            TargetAttribute="{Binding ElementName=DefaultAtt,
                                             Path=SelectedValue,
-                                            PresentationTraceSources.TraceLevel=Medium}"
+                                            Converter={StaticResource NoOpp},
+                                            ConverterParameter=T2a,
+                                            PresentationTraceSources.TraceLevel=High}"
                            Target="{Binding ElementName=ButtonItem1,
-                                    PresentationTraceSources.TraceLevel=Medium}" />
+                                    PresentationTraceSources.TraceLevel=None}" />-->
                     
-                    <cb:FZ Name="T3"
+                    <!--<cb:FZ Name="T3"
                            Target="{Binding ElementName=ButtonItem2,
-                                    PresentationTraceSources.TraceLevel=Medium}" />
+                                    PresentationTraceSources.TraceLevel=None}" />-->
                     
                 </cb:TargetGroup.Targets>
 

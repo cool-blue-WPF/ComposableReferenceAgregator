@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Reflection;
 
@@ -35,6 +36,14 @@ namespace Util
 					name, item.ToString()));
 			}
 			prop.SetValue(item, value);
+		}
+	}
+
+	public static class Extensions
+	{
+		public static string DefaultIfEmpty(this String str, string defaultValue)
+		{
+			return string.IsNullOrEmpty(str) ? defaultValue : str;
 		}
 	}
 }
