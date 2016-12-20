@@ -190,7 +190,24 @@ namespace CollectionBinding
 
 		#region AP string TargetAttribute
 
-		public static readonly DependencyProperty TargetAttributeProperty;
+		public static readonly DependencyProperty TargetAttributeProperty = 
+			TargetGroup.TargetAttributeProperty.AddOwner(typeof(FZ),
+			new FrameworkPropertyMetadata
+			{
+				Inherits = true, 
+				PropertyChangedCallback = TargetAttributeChanged
+			});
+
+		public static void SetTargetAttribute (DependencyObject target, string value)
+		{
+			target.SetValue(TargetAttributeProperty, value);
+		}
+
+		public static string GetTargetAttribute (DependencyObject target)
+		{
+			return (string)target.GetValue(TargetAttributeProperty);
+		}
+
 		public string TargetAttribute
 		{
 			get { return (string)GetValue(TargetAttributeProperty); }
@@ -215,6 +232,8 @@ namespace CollectionBinding
 
 		public FZ()
 		{
+			instance = this;
+
 			Type = "Indirect";
 			EventState = new State(() =>
 					new State.state
@@ -229,13 +248,13 @@ namespace CollectionBinding
 
 		static FZ()
 		{
-			TargetAttributeProperty =
-				TargetGroup.TargetAttributeProperty.AddOwner(typeof(FZ));
 		}
 
-		private void TargetAttributeChanged(object sender, EventArgs eventArgs)
+		private static FZ instance;
+		private static void TargetAttributeChanged(DependencyObject sender, 
+			DependencyPropertyChangedEventArgs eventArgs)
 		{
-			TargetAttribute = ((TargetGroup)sender).TargetAttribute;
+			instance.TargetAttribute = ((TargetGroup)sender).TargetAttribute;
 		}
 
 	}

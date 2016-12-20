@@ -1,7 +1,6 @@
 ﻿
 using System;
-using System.ComponentModel;
-using System.Data;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Util
@@ -44,6 +43,33 @@ namespace Util
 		public static string DefaultIfEmpty(this String str, string defaultValue)
 		{
 			return string.IsNullOrEmpty(str) ? defaultValue : str;
+		}
+	}
+
+	public class ValueHistory<T>
+	{
+		private readonly Stack<T> _history = new Stack<T>();
+
+		public T Current
+		{
+			set { _history.Push(value); }
+			get { return _history.Peek(); }
+		}
+
+		public T Pop()
+		{
+			return _history.Pop();	
+		}
+
+		public T Restore()
+		{
+			_history.Pop();
+			return _history.Peek();
+		}
+
+		public ValueHistory(T value)
+		{
+			_history.Push(value);
 		}
 	}
 }
