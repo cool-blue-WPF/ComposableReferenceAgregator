@@ -57,6 +57,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="TestParent.cs" />
     <Compile Include="CustomMarkupExtension.cs" />
     <Compile Include="IState.cs" />
     <Compile Include="TargetGroup.cs" />
@@ -79,6 +81,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

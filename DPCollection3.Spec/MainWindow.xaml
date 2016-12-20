@@ -53,7 +53,7 @@
                             Target="{Binding ElementName=ButtonItem1,
                                             Converter={StaticResource NoOpp},
                                             ConverterParameter=T2,
-                                            PresentationTraceSources.TraceLevel=None}" />
+                                            PresentationTraceSources.TraceLevel=High}" />
 
                     <!--<cb:FZ Name="T2a"
                            TargetAttribute="{Binding ElementName=DefaultAtt,

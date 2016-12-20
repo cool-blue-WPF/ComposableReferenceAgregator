@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 
 namespace CollectionBinding.Spec
 {
@@ -24,8 +26,12 @@ namespace CollectionBinding.Spec
 				};
 				button.HorizontalAlignment = HorizontalAlignment.Stretch;
 				button.HorizontalContentAlignment = HorizontalAlignment.Left;
-				
 			}
+
+			var targets = Group.Targets;
+			var defAttr = Group.TargetAttribute;
+			var attrFZ = targets[0].TargetAttribute;
+			Debug.WriteLine("FZ TargetAttribute {0}", (string)attrFZ);
 		}
 	}
 }
