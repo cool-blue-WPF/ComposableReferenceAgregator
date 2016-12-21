@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Runtime.CompilerServices;
-using CollectionBinding.Annotations;
+using JetBrains.Annotations;
 
 namespace CollectionBinding
 {
