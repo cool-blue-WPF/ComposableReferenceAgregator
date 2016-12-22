@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using JetBrains.Annotations;
 using Util;
 
 /* 
@@ -13,7 +17,49 @@ namespace CollectionBinding
 {
 	public class TargetGroup : TextBox
 	{
-		private static TargetGroup instance;
+		#region refresh
+		public static void _Refresh (
+			DependencyObject d, DependencyObject s, object newValue)
+		{
+			var host = d as TextBox;
+			if (host == null) return;
+			//var attrinuteName = ((TargetGroup)d).TargetAttribute;
+			var item = s as FE;
+			if (item == null) return;
+			var targetAttribute = item.Atrribute;
+			if (targetAttribute == null) return;
+			var route = Utility.GetMemberByName(item, "Type") ?? "Direct";
+			host.Text += string.Format("{2}{0}\t{1}", route, targetAttribute.ToString(),
+				host.Text == "" ? "" : "\n");
+		}
+
+		public static void Refresh(DependencyObject d, DependencyObject s,
+			object nweValue)
+		{
+			var host = d as TargetGroup;
+			if (host == null) return;
+			host.Text = string.Format("parent: TargetAttribute: {0}",
+				host.TargetAttribute);
+			var targets = host.Targets;
+			foreach (var target in targets)
+			{
+				host.Text += string.Format("\n{0}\t{1}\t{2}", target.Name,
+					target.TargetAttribute, target.Atrribute);
+			}
+		}
+
+		public void RefreshAsync (DependencyObject sender, object newValue)
+		{
+			Dispatcher.InvokeAsync(() => Refresh(this, sender, newValue));
+		}
+
+		private void OnPropertyChanged (DependencyObject sender, object oldvalue, object newvalue)
+		{
+			if (oldvalue != null && oldvalue.Equals(newvalue)) return;
+			RefreshAsync(sender, newvalue);
+		}
+
+		#endregion
 
 		#region Events
 		public event EventHandler DebugProbe;
@@ -26,50 +72,10 @@ namespace CollectionBinding
 				handler(sender, e);
 			}
 		}
-		public void DebugTrace (object sender, EventArgs args)
-		{
-			string hostName, targetAtt, itemName;
-			const string defaultValue = "un-set";
-			var target = args as State;
-			if (target != null)
-			{
-				hostName = target.Target.Host.DefaultIfEmpty(defaultValue + " host name");
-				targetAtt = target.Target.TargetAttr.DefaultIfEmpty(defaultValue + " Attr name");
-				itemName = target.Target.TargetName.DefaultIfEmpty(defaultValue + " target name");
-			}
-			else
-			{
-				hostName = targetAtt = itemName = defaultValue + " value";
-			}
-			var senderType = sender.GetType();
-			Debug.WriteLine("\n^{0} from {1} targetting {2} on {3}^\n",
-								senderType, hostName, targetAtt, itemName);
-		}
-
-		private static void PropertyChangedCallback (DependencyObject d,
-			DependencyPropertyChangedEventArgs e)
-		{
-			var host = d as TargetGroup;
-			if (host == null) return;
-
-			// partition the output for bindings
-			instance.OnDebugProbe(instance, new State(() =>
-					new State.state
-					{
-						Host = e.Property.Name,
-						TargetName = null,
-						TargetAttr = host.TargetAttribute,
-						Hash = host.GetHashCode()
-					}
-				)
-			);
-		}
 
 		#endregion
 
 		#region AP TargetAttribute
-
-		// todo callback to update
 
 		public static readonly DependencyProperty TargetAttributeProperty =
 			DependencyProperty.RegisterAttached(
@@ -77,7 +83,7 @@ namespace CollectionBinding
 				typeof(TargetGroup),
 				new FrameworkPropertyMetadata("CommandParameter",
 						FrameworkPropertyMetadataOptions.Inherits,
-						PropertyChangedCallback));
+						TargetAttributeChangedCallback));
 
 		public static void SetTargetAttribute (DependencyObject target, string value)
 		{
@@ -89,10 +95,18 @@ namespace CollectionBinding
 			return (string)target.GetValue(TargetAttributeProperty);
 		}
 
+		private static void TargetAttributeChangedCallback (DependencyObject d,
+			DependencyPropertyChangedEventArgs e)
+		{
+			var instance = d as TargetGroup;
+			if (instance == null) return;
+			instance.OnPropertyChanged(d, e.OldValue, e.NewValue);
+		}
+
 		public string TargetAttribute
 		{
-			get { return (string)GetValue(TargetAttributeProperty); }
-			set { SetValue(TargetAttributeProperty, value); }
+			get { return GetTargetAttribute(this); }
+			set { SetTargetAttribute(this, (string)value); }
 		}
 
 		#endregion
@@ -101,28 +115,46 @@ namespace CollectionBinding
 
 		public static readonly DependencyProperty TargetsProperty =
 			DependencyProperty.Register(
-				"Targets", typeof(FreezableCollection<FZ>),
+				"Targets", typeof(ObservableCollection<FE>),
 				typeof(TargetGroup),
-				new PropertyMetadata(default(FreezableCollection<FZ>),
-					PropertyChangedCallback));
+				new PropertyMetadata(default(ObservableCollection<FE>)));
 
-		public FreezableCollection<FZ> Targets
+		public ObservableCollection<FE> Targets
 		{
-			get { return (FreezableCollection<FZ>) GetValue(TargetsProperty); }
+			get { return (ObservableCollection<FE>) GetValue(TargetsProperty); }
 			set { SetValue(TargetsProperty, value); }
 		}
 
-		private static void ColFzReceiverOnChanged(object d, EventArgs e)
+		private void Target_Changed (object s, PropertyChangedEventArgs args)
 		{
-			var item = d as FZ;
-			if (item == null) return;
+			var e = args as MyPropertyChangedEventArgs;
+			if (e == null)
+				OnPropertyChanged((DependencyObject) s, new object(), new object());
+			else
+				OnPropertyChanged((DependencyObject) s, e.OldValue, e.NewValue);
+		}
 
-			instance.OnDebugProbe(item, item.EventState);	// partition the output for bindings
+		void Targets_Changed (object d, NotifyCollectionChangedEventArgs e)
+		{
+			var addedItems = e.NewItems as IList;
+			var deletedItems = e.OldItems as IList;
 
-			instance.AddLogicalChild(item);
-
-			FZChangedCallback.NamedChangedCallback(instance,
-				new DependencyPropertyChangedEventArgs(TargetsProperty, null, item));
+			if (addedItems != null)
+			{
+				foreach (var addedItem in addedItems)
+				{
+					this.AddLogicalChild((FE)addedItem);
+					((FE)addedItem).PropertyChanged += Target_Changed;
+				}
+			}
+			if (deletedItems != null)
+			{
+				foreach (var deletedItem in deletedItems)
+				{
+					this.RemoveLogicalChild((FE)deletedItem);
+					((FE)deletedItem).PropertyChanged -= Target_Changed;
+				}
+			}
 		}
 
 		protected override IEnumerator LogicalChildren
@@ -136,12 +168,8 @@ namespace CollectionBinding
 
 		public TargetGroup()
 		{
-			instance = this;
-
-			DebugProbe += DebugTrace;
-
-			Targets = new FreezableCollection<FZ>();
-			Targets.Changed += ColFzReceiverOnChanged;
+			Targets = new ObservableCollection<FE>();
+			Targets.CollectionChanged += Targets_Changed;
 		}
 
 		// bind to standard TextBox templates and styles
@@ -152,9 +180,9 @@ namespace CollectionBinding
 		}
 	}
 
-	public class FZ : Freezable
+	public class FE : FrameworkElement, INotifyPropertyChanged
 	{
-		public string Name { get; set; }
+		//public new string Name { get; set; }
 
 		public int Hash
 		{
@@ -169,7 +197,8 @@ namespace CollectionBinding
 		public static readonly DependencyProperty TargetProperty = DependencyProperty
 			.Register(
 				"Target", typeof(FrameworkElement),
-				typeof(FZ), new PropertyMetadata(default(FrameworkElement)));
+				typeof(FE), 
+				new PropertyMetadata(default(FrameworkElement), OnPropertyChanged));
 
 		public FrameworkElement Target
 		{
@@ -186,27 +215,24 @@ namespace CollectionBinding
 
 		public string Type { get; set; }
 
-		// todo change to check binding
-
 		#region AP string TargetAttribute
 
 		public static readonly DependencyProperty TargetAttributeProperty = 
-			TargetGroup.TargetAttributeProperty.AddOwner(typeof(FZ),
+			TargetGroup.TargetAttributeProperty.AddOwner(typeof(FE),
 			new FrameworkPropertyMetadata
 			{
-				Inherits = true, 
-				PropertyChangedCallback = TargetAttributeChanged
+				DefaultValue = TargetGroup.TargetAttributeProperty.DefaultMetadata
+									.DefaultValue,
+				Inherits = true,
+				PropertyChangedCallback = OnPropertyChanged
 			});
 
-		public static void SetTargetAttribute (DependencyObject target, string value)
+		private static void OnPropertyChanged (DependencyObject d,
+											DependencyPropertyChangedEventArgs e)
 		{
-			target.SetValue(TargetAttributeProperty, value);
+			((FE)d).OnPropertyChanged(e.OldValue, e.NewValue, e.Property.Name);
 		}
 
-		public static string GetTargetAttribute (DependencyObject target)
-		{
-			return (string)target.GetValue(TargetAttributeProperty);
-		}
 
 		public string TargetAttribute
 		{
@@ -223,56 +249,25 @@ namespace CollectionBinding
 
 		#endregion
 
-		protected override Freezable CreateInstanceCore()
+		public FE()
 		{
-			throw new NotImplementedException();
-		}
-
-		public State EventState;
-
-		public FZ()
-		{
-			instance = this;
-
 			Type = "Indirect";
-			EventState = new State(() =>
-					new State.state
-					{
-						Host = this.Name,
-						TargetName = ItemName,
-						TargetAttr = TargetAttribute,
-						Hash = GetHashCode()
-					}
-			);
 		}
 
-		static FZ()
+		static FE()
 		{
 		}
 
-		private static FZ instance;
-		private static void TargetAttributeChanged(DependencyObject sender, 
-			DependencyPropertyChangedEventArgs eventArgs)
-		{
-			instance.TargetAttribute = ((TargetGroup)sender).TargetAttribute;
-		}
+		public event PropertyChangedEventHandler PropertyChanged;
 
-	}
-	public class State : EventArgs
-	{
-		private readonly Func<state> _getItem;
-		public State(Func<state> getItem)
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged (object oldValue, object newValue,
+			[CallerMemberName] string propertyName = null)
 		{
-			_getItem = getItem;
+			var handler = PropertyChanged;
+			if (handler != null)
+				handler(this,
+					new MyPropertyChangedEventArgs(propertyName, oldValue, newValue));
 		}
-
-		public struct state
-		{
-			public string Host;
-			public string TargetName;
-			public string TargetAttr;
-			public int Hash;
-		}
-		public state Target { get { return _getItem(); } }
 	}
 }

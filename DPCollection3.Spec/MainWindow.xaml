@@ -29,31 +29,24 @@
         <!--<TextBlock Text="{Binding ElementName=DefaultAtt, Path=SelectedValue}" />-->
 
         <StackPanel Name="colFZ" Margin="6">
-            <TextBlock>colFZ</TextBlock>
-
-            <!--<do:Targets x:Name="AttributeBinding"
-                colFZ_Receiver="{Binding {do:FZ Item ElementName=ButtonItem}}" 
-                                Initialized="OnItitialised" />-->
+            <TextBlock>colFE</TextBlock>
 
             <cb:TargetGroup x:Name="Group"
                             TargetAttribute=
                                 "{Binding ElementName=DefaultAtt, Path=SelectedValue,
                                     Converter={StaticResource NoOpp},
                                     ConverterParameter=Group,
-                                    PresentationTraceSources.TraceLevel=High}" >
-            <!--<cb:TargetGroup x:Name="ObjectBinding" >-->
+                                    PresentationTraceSources.TraceLevel=None}" >
 
                 <cb:TargetGroup.Targets>
                     
-                    <!--<cb:FZ TargetAttribute="Name" Name="T1"
+                    <cb:FE TargetAttribute="Name" Name="T1"
                            Target="{Binding ElementName=ButtonItem,
-                                    PresentationTraceSources.TraceLevel=None}" />-->
+                                    PresentationTraceSources.TraceLevel=None}" />
 
-                    <cb:FZ Name="T2"
+                    <cb:FE Name="T2"
                             Target="{Binding ElementName=ButtonItem1,
-                                            Converter={StaticResource NoOpp},
-                                            ConverterParameter=T2,
-                                            PresentationTraceSources.TraceLevel=High}" />
+                                            PresentationTraceSources.TraceLevel=None}" />
 
                     <!--<cb:FZ Name="T2a"
                            TargetAttribute="{Binding ElementName=DefaultAtt,
@@ -64,9 +57,9 @@
                            Target="{Binding ElementName=ButtonItem1,
                                     PresentationTraceSources.TraceLevel=None}" />-->
                     
-                    <!--<cb:FZ Name="T3"
+                    <cb:FE Name="T3"
                            Target="{Binding ElementName=ButtonItem2,
-                                    PresentationTraceSources.TraceLevel=None}" />-->
+                                    PresentationTraceSources.TraceLevel=None}" />
                     
                 </cb:TargetGroup.Targets>
 

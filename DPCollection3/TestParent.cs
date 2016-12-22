@@ -151,7 +151,7 @@ namespace CollectionBinding
 			DependencyProperty.Register(
 				"UnAttachedString", typeof(string), 
 				typeof(TestChild),
-				new PropertyMetadata(default(string), OnStringChanged));
+				new PropertyMetadata(default(string), OnPropertyChanged));
 
 		public string UnAttachedString
 		{
@@ -167,9 +167,9 @@ namespace CollectionBinding
 			TestParent.AttachedStringProperty.AddOwner(typeof(TestChild),
 				new FrameworkPropertyMetadata(
 					(object) TestParent.AttachedStringProperty.DefaultMetadata.DefaultValue,
-						OnStringChanged));
+						OnPropertyChanged));
 
-		private static void OnStringChanged(DependencyObject d,
+		private static void OnPropertyChanged(DependencyObject d,
 											DependencyPropertyChangedEventArgs e)
 		{
 			((TestChild) d).OnPropertyChanged(e.OldValue, e.NewValue, e.Property.Name);
@@ -199,16 +199,4 @@ namespace CollectionBinding
 		#endregion
 	}
 
-	public class MyPropertyChangedEventArgs : PropertyChangedEventArgs
-	{
-		public MyPropertyChangedEventArgs(string propertyName, object oldValue, 
-			object newValue) : base(propertyName)
-		{
-			OldValue = oldValue;
-			NewValue = newValue;
-		}
-
-		public object OldValue;
-		public object NewValue;
-	}
 }

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
 
 namespace CollectionBinding.Spec
 {
@@ -31,7 +30,7 @@ namespace CollectionBinding.Spec
 			var targets = Group.Targets;
 			var defAttr = Group.TargetAttribute;
 			var attrFZ = targets[0].TargetAttribute;
-			Debug.WriteLine("FZ TargetAttribute {0}", (string)attrFZ);
+			Debug.WriteLine("FE TargetAttribute {0}", (string)attrFZ);
 		}
 	}
 }
