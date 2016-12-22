@@ -2,29 +2,42 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using Util;
 
 namespace CollectionBinding
 {
 	public class TestParent : Label
 	{
-		public void Refresh()
+		#region refresh
+		private static void Refresh (TestParent instance)
 		{
-			this.Content = string.Format("parent value:\t{0}", this.AttachedString);
-			foreach (var myItem in this.MyItems)
+			instance.Content = string.Format("parent value:\t{0}", instance.AttachedString);
+			foreach (var myItem in instance.MyItems)
 			{
-				this.Content += string.Format("\n  child value:\t{0}\t{1}", 
+				instance.Content += string.Format("\n  child value:\t{0}\t{1}",
 								myItem.AttachedString, myItem.UnAttachedString);
 			}
-			this.Content += string.Format("\n Attached DP References are{0} equal",
+			instance.Content += string.Format("\n Attached DP References are{0} equal",
 				TestParent.AttachedStringProperty == TestChild.AttachedStringProperty
 				? "" : " NOT");
+
 		}
+
+		public static void RefreshAsync(TestParent tp)
+		{
+			tp.Dispatcher.InvokeAsync(() => Refresh(tp));
+		}
+
+		private void OnPropertyChanged (object oldvalue, object newvalue)
+		{
+			if (oldvalue != null && oldvalue.Equals(newvalue)) return;
+			RefreshAsync(this);
+		}
+
+		#endregion
 
 		#region Inheritable AP string AttachedString
 
@@ -51,18 +64,13 @@ namespace CollectionBinding
 		{
 			var instance = d as TestParent;
 			if (instance == null) return;
-			instance.OnStringChanged(e.OldValue, e.NewValue);
+			instance.OnPropertyChanged(e.OldValue, e.NewValue);
 		}
 
 		public string AttachedString
 		{
 			get { return GetAttachedString(this); }
 			set { SetAttachedString(this, (string) value); }
-		}
-
-		private void OnStringChanged (object oldvalue, object newvalue)
-		{
-			this.Refresh();
 		}
 
 		#endregion
@@ -83,18 +91,11 @@ namespace CollectionBinding
 
 		private void MyItem_Changed(object s, PropertyChangedEventArgs args )
 		{
-			var item = s as TestChild;
-			var field = Utility.GetMemberByName(item, args.PropertyName + "Property")
-							as FieldInfo;
-			if (item == null || field == null) return;
-			var prop = field.GetValue(item) as DependencyProperty;
-			if (prop == null) return;
-			// Ignore Inherited changes
-			if (DependencyPropertyHelper
-					.GetValueSource(item, prop)
-					.BaseValueSource == BaseValueSource.Inherited)
-				return;
-			this.OnStringChanged(this, args);
+			var e = args as MyPropertyChangedEventArgs;
+			if (e == null)
+				OnPropertyChanged(new object(), new object());
+			else
+				OnPropertyChanged(e.OldValue, e.NewValue);
 		}
 
 		void MyItems_Changed(object d, NotifyCollectionChangedEventArgs e)
@@ -171,7 +172,7 @@ namespace CollectionBinding
 		private static void OnStringChanged(DependencyObject d,
 											DependencyPropertyChangedEventArgs e)
 		{
-			((TestChild) d).OnPropertyChanged(e.Property.Name);
+			((TestChild) d).OnPropertyChanged(e.OldValue, e.NewValue, e.Property.Name);
 		}
 
 		public string AttachedString
@@ -186,14 +187,28 @@ namespace CollectionBinding
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged(
+		protected virtual void OnPropertyChanged(object oldValue, object newValue,
 			[CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;
 			if (handler != null)
-				handler(this, new PropertyChangedEventArgs(propertyName));
+				handler(this,
+					new MyPropertyChangedEventArgs(propertyName, oldValue, newValue));
 		}
 
 		#endregion
+	}
+
+	public class MyPropertyChangedEventArgs : PropertyChangedEventArgs
+	{
+		public MyPropertyChangedEventArgs(string propertyName, object oldValue, 
+			object newValue) : base(propertyName)
+		{
+			OldValue = oldValue;
+			NewValue = newValue;
+		}
+
+		public object OldValue;
+		public object NewValue;
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using CollectionBinding;
 
 namespace APTest.Spec
 {
@@ -9,7 +10,7 @@ namespace APTest.Spec
 			InitializeComponent();
 			this.Loaded += (s, e) =>
 			{
-				Test.Refresh();
+				TestParent.RefreshAsync(Test);
 			};
 		}
 	}
