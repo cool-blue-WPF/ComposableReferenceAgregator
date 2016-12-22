@@ -12,16 +12,19 @@ namespace Util
 			var t = item.GetType();
 			return t.GetProperty(name);
 		}
-		
-		public static object GetMemberByName(object item, string name)
+
+		static FieldInfo _getField (object item, string name)
 		{
-			//if(item == null) throw new NoNullAllowedException(
-			//	String.Format("******Cannot reflect member {0} on null object******", name));
+			var t = item.GetType();
+			return t.GetField(name);
+		}
 
-			if (item == null) return null;
+		public static object GetMemberByName (object item, string name)
+		{
+			if (item == null || string.IsNullOrEmpty(name)) return null;
 
-			var prop = string.IsNullOrEmpty(name) ? null : _getProperty(item, name);
-			return prop == null ? null : prop.GetValue(item, null);
+			var prop = _getProperty(item, name);
+			return prop == null ? _getField(item, name) : prop.GetValue(item, null);
 		}
 		public static void SetMemberByName(object item, string name,
 			object value)

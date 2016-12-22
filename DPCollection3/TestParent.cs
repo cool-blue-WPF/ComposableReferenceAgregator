@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using Util;
 
 namespace CollectionBinding
 {
@@ -16,7 +18,8 @@ namespace CollectionBinding
 			this.Content = string.Format("parent value:\t{0}", this.AttachedString);
 			foreach (var myItem in this.MyItems)
 			{
-				this.Content += string.Format("\n  child value:\t{0}", myItem.AttachedString);
+				this.Content += string.Format("\n  child value:\t{0}\t{1}", 
+								myItem.AttachedString, myItem.UnAttachedString);
 			}
 			this.Content += string.Format("\n Attached DP References are{0} equal",
 				TestParent.AttachedStringProperty == TestChild.AttachedStringProperty
@@ -30,7 +33,7 @@ namespace CollectionBinding
 				DependencyProperty.RegisterAttached(
 					"AttachedString", typeof(string),
 					typeof(TestParent),
-					new FrameworkPropertyMetadata(default(String),
+					new FrameworkPropertyMetadata("Not Set in Parent",
 						FrameworkPropertyMetadataOptions.Inherits, OnStringChanged));
 
 		public static void SetAttachedString(DependencyObject target, string value)
@@ -64,27 +67,31 @@ namespace CollectionBinding
 
 		#endregion
 
-		#region DP FreezableCollection<TestChild> MyItems
+		#region DP ObservableCollection<TestChild> MyItems
 
 		public static readonly DependencyProperty MyItemsProperty =
 			DependencyProperty.Register(
-				"MyItems", typeof(FreezableCollection<TestChild>),
+				"MyItems", typeof(ObservableCollection<TestChild>),
 				typeof(TestParent),
-				new PropertyMetadata(default(FreezableCollection<TestChild>)));
+				new PropertyMetadata(default(ObservableCollection<TestChild>)));
 
-		public FreezableCollection<TestChild> MyItems
+		public ObservableCollection<TestChild> MyItems
 		{
-			get { return (FreezableCollection<TestChild>) GetValue(MyItemsProperty); }
+			get { return (ObservableCollection<TestChild>) GetValue(MyItemsProperty); }
 			set { SetValue(MyItemsProperty, value); }
 		}
 
 		private void MyItem_Changed(object s, PropertyChangedEventArgs args )
 		{
 			var item = s as TestChild;
-			if (item == null) return;
+			var field = Utility.GetMemberByName(item, args.PropertyName + "Property")
+							as FieldInfo;
+			if (item == null || field == null) return;
+			var prop = field.GetValue(item) as DependencyProperty;
+			if (prop == null) return;
 			// Ignore Inherited changes
 			if (DependencyPropertyHelper
-					.GetValueSource(item, TestChild.AttachedStringProperty)
+					.GetValueSource(item, prop)
 					.BaseValueSource == BaseValueSource.Inherited)
 				return;
 			this.OnStringChanged(this, args);
@@ -123,8 +130,8 @@ namespace CollectionBinding
 
 		public TestParent()
 		{
-			MyItems = new FreezableCollection<TestChild>();
-			((INotifyCollectionChanged) MyItems).CollectionChanged += MyItems_Changed;
+			MyItems = new ObservableCollection<TestChild>();
+			MyItems.CollectionChanged += MyItems_Changed;
 		}
 
 		static TestParent()
@@ -137,13 +144,29 @@ namespace CollectionBinding
 
 	public class TestChild : FrameworkElement, INotifyPropertyChanged
 	{
+		#region DP string UnAttachedString
+
+		public static readonly DependencyProperty UnAttachedStringProperty = 
+			DependencyProperty.Register(
+				"UnAttachedString", typeof(string), 
+				typeof(TestChild),
+				new PropertyMetadata(default(string), OnStringChanged));
+
+		public string UnAttachedString
+		{
+			get { return (string) GetValue(UnAttachedStringProperty); }
+			set { SetValue(UnAttachedStringProperty, value); }
+		}
+
+		#endregion
+
 		#region Inherited AP string AttachedString
 
 		public static readonly DependencyProperty AttachedStringProperty =
 			TestParent.AttachedStringProperty.AddOwner(typeof(TestChild),
 				new FrameworkPropertyMetadata(
 					(object) TestParent.AttachedStringProperty.DefaultMetadata.DefaultValue,
-					FrameworkPropertyMetadataOptions.Inherits, OnStringChanged));
+						OnStringChanged));
 
 		private static void OnStringChanged(DependencyObject d,
 											DependencyPropertyChangedEventArgs e)
@@ -159,6 +182,7 @@ namespace CollectionBinding
 
 		#endregion
 
+		#region INotifyPropertyChanged implimentation
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
@@ -169,5 +193,7 @@ namespace CollectionBinding
 			if (handler != null)
 				handler(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		#endregion
 	}
 }
