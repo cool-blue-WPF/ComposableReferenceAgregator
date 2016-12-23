@@ -37,12 +37,12 @@
         
         <!--Custom Control-->
         <cb:TestParent x:Name="Test" Margin="110,0,0,0"
-                   AttachedString="{Binding ElementName=ParentString, 
+                   TargetAttribute="{Binding ElementName=ParentString, 
                                     Path=SelectedValue}" Background="#FFEBEBEB" >
             <cb:TestParent.MyItems>
                 <cb:TestChild UnAttachedString="{Binding ElementName=UnattachedChildString, 
                                 Path=SelectedValue}" />
-                <cb:TestChild AttachedString=
+                <cb:TestChild TargetAttribute=
                            "{Binding ElementName=ChildString, 
                                 Path=SelectedValue,
                                     PresentationTraceSources.TraceLevel=High}" />

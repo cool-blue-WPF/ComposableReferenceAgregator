@@ -14,14 +14,14 @@ namespace CollectionBinding
 		#region refresh
 		private static void Refresh (TestParent instance)
 		{
-			instance.Content = string.Format("parent value:\t{0}", instance.AttachedString);
+			instance.Content = string.Format("parent value:\t{0}", instance.TargetAttribute);
 			foreach (var myItem in instance.MyItems)
 			{
 				instance.Content += string.Format("\n  child value:\t{0}\t{1}",
-								myItem.AttachedString, myItem.UnAttachedString);
+								myItem.TargetAttribute, myItem.UnAttachedString);
 			}
 			instance.Content += string.Format("\n Attached DP References are{0} equal",
-				TestParent.AttachedStringProperty == TestChild.AttachedStringProperty
+				TestParent.TargetAttributeProperty == TestChild.TargetAttributeProperty
 				? "" : " NOT");
 
 		}
@@ -39,24 +39,24 @@ namespace CollectionBinding
 
 		#endregion
 
-		#region Inheritable AP string AttachedString
+		#region Inheritable AP string TargetAttribute
 
 		public static readonly
-			DependencyProperty AttachedStringProperty =
+			DependencyProperty TargetAttributeProperty =
 				DependencyProperty.RegisterAttached(
-					"AttachedString", typeof(string),
+					"TargetAttribute", typeof(string),
 					typeof(TestParent),
 					new FrameworkPropertyMetadata("Not Set in Parent",
 						FrameworkPropertyMetadataOptions.Inherits, OnStringChanged));
 
-		public static void SetAttachedString(DependencyObject target, string value)
+		public static void SetTargetAttribute(DependencyObject target, string value)
 		{
-			target.SetValue(AttachedStringProperty, value);
+			target.SetValue(TargetAttributeProperty, value);
 		}
 
-		public static string GetAttachedString(DependencyObject target)
+		public static string GetTargetAttribute(DependencyObject target)
 		{
-			return (string) target.GetValue(AttachedStringProperty);
+			return (string) target.GetValue(TargetAttributeProperty);
 		}
 
 		private static void OnStringChanged(DependencyObject d,
@@ -67,10 +67,10 @@ namespace CollectionBinding
 			instance.OnPropertyChanged(e.OldValue, e.NewValue);
 		}
 
-		public string AttachedString
+		public string TargetAttribute
 		{
-			get { return GetAttachedString(this); }
-			set { SetAttachedString(this, (string) value); }
+			get { return GetTargetAttribute(this); }
+			set { SetTargetAttribute(this, (string) value); }
 		}
 
 		#endregion
@@ -161,12 +161,12 @@ namespace CollectionBinding
 
 		#endregion
 
-		#region Inherited AP string AttachedString
+		#region Inherited AP string TargetAttribute
 
-		public static readonly DependencyProperty AttachedStringProperty =
-			TestParent.AttachedStringProperty.AddOwner(typeof(TestChild),
+		public static readonly DependencyProperty TargetAttributeProperty =
+			TestParent.TargetAttributeProperty.AddOwner(typeof(TestChild),
 				new FrameworkPropertyMetadata(
-					(object) TestParent.AttachedStringProperty.DefaultMetadata.DefaultValue,
+					(object) TestParent.TargetAttributeProperty.DefaultMetadata.DefaultValue,
 						OnPropertyChanged));
 
 		private static void OnPropertyChanged(DependencyObject d,
@@ -175,10 +175,10 @@ namespace CollectionBinding
 			((TestChild) d).OnPropertyChanged(e.OldValue, e.NewValue, e.Property.Name);
 		}
 
-		public string AttachedString
+		public string TargetAttribute
 		{
-			get { return (string) GetValue(AttachedStringProperty); }
-			set { SetValue(AttachedStringProperty, (string) value); }
+			get { return (string) GetValue(TargetAttributeProperty); }
+			set { SetValue(TargetAttributeProperty, (string) value); }
 		}
 
 		#endregion

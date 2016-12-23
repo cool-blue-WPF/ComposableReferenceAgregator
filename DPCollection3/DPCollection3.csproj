@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomMarkupExtension.cs" />
+    <Compile Include="ListViewAggregator.cs" />
     <Compile Include="MyPropertyChangedEventArgs.cs" />
     <Compile Include="IState.cs" />
     <Compile Include="TargetGroup.cs" />
@@ -83,7 +84,6 @@
     <None Include="ClassDiagram1.cd" />
     <None Include="ClassDiagram2.cd" />
     <None Include="ClassDiagram3.cd" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
